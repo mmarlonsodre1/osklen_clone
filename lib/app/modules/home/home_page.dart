@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:osklen/app/modules/home/model/carousel_model.dart';
+import 'package:osklen/components/buttons.dart';
 import 'package:osklen/components/menu/top_menu.dart';
 import 'package:sizer/sizer.dart';
 import 'package:video_player/video_player.dart';
@@ -27,18 +30,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         setState(() {});
       })..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          var page = _pageController.page?.round() ?? 0;
-          if (page + 1 == 1) {
-            _videoController.play();
-          } else {
-            _videoController.pause();
-          }
-
-          if (page < 2) {
-            _pageController.jumpToPage(page + 1);
-          } else {
-            _pageController.jumpToPage(0);
-          }
+          _goToPage(null);
           _controller.reset();
           _controller.forward();
         }
@@ -48,6 +40,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.initState();
   }
 
+  void _goToPage(int? index) {
+    var page = index ?? _pageController.page?.round() ?? 0;
+    if (page + 1 == 1) {
+      _videoController.play();
+    } else {
+      _videoController.pause();
+    }
+
+    if (page <= 2) {
+      _pageController.jumpToPage(page + 1);
+    } else {
+      _pageController.jumpToPage(0);
+    }
+  }
   void _loadVideoPlayer(){
     _videoController = VideoPlayerController.asset('assets/videos/vd_carousel2.mp4');
     _videoController.addListener(() {
@@ -73,6 +79,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         children: [
           _pager(),
           _pagerListLoading(),
+          _pagerInformation(),
           const TopMenu(),
         ],
       ),
@@ -104,13 +111,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     var page = 0;
     try { page = _pageController.page?.round() ?? 0; } catch(_) {}
 
-    return SizedBox(
-      width: 5.w,
-      child: LinearProgressIndicator(
-        minHeight: 2,
-        color: Colors.white,
-        value: index == page ? _animation.value : 0,
-        semanticsLabel: 'null',
+    return GestureDetector(
+      onTap: () => _goToPage(index - 1),
+      child: SizedBox(
+        width: 5.w,
+        child: SizedBox(
+          height: 0.4.h,
+          child: LinearProgressIndicator(
+            minHeight: 2,
+            color: Colors.white,
+            value: index == page ? _animation.value : 0,
+            semanticsLabel: 'null',
+          ),
+        ),
       ),
     );
   }
@@ -144,6 +157,74 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           fit: BoxFit.fill,
         ),
       ],
+    );
+  }
+
+  Widget _pagerInformation() {
+    var page = 0;
+    try { page = _pageController.page?.round() ?? 0; } catch(_) {}
+    var list = [
+      CarouselModel(
+        'sale | inv22',
+        'descontos especiais em peças selecionadas da coleçnao Natureza',
+        'compre',
+        Colors.white
+      ),
+      CarouselModel(
+          'ascari',
+          '| Vintage e Conteporâneo |\n\nColeção em parceria com Helio Ascari',
+          'conheça',
+          Colors.white
+      ),
+      CarouselModel(
+          'shoes',
+          'estética | ética | funcionalidade',
+          'compre',
+          Colors.black
+      ),
+      CarouselModel(
+        'tons terrosos',
+        'Novas cores | coleção natureza',
+        'compre',
+        Colors.black
+      )
+    ];
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: 20.h),
+      child: Align(
+        alignment: AlignmentDirectional.bottomCenter,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              list[page].title,
+              style: GoogleFonts.lato(
+                fontWeight: FontWeight.w900,
+                fontSize: 6.sp,
+                color: list[page].color,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 2.h,),
+            Text(
+              list[page].description,
+              style: GoogleFonts.lato(
+                fontWeight: FontWeight.w500,
+                fontSize: 3.sp,
+                color: list[page].color,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 2.h,),
+            AppOutlinedButton(
+              onPress: () {},
+              title: list[page].button,
+              color: list[page].color,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
