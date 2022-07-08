@@ -4,7 +4,10 @@ class CarouselModel {
   String title;
   String description;
   String button;
-  Color color;
+  Color? primaryColor;
+  Color? secondaryColor;
 
-  CarouselModel(this.title, this.description, this.button, this.color);
+  CarouselModel(this.title, this.description, this.button, {
+        this.primaryColor, this.secondaryColor
+  });
 }

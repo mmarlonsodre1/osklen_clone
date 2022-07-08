@@ -6,7 +6,8 @@ import 'package:osklen/components/menu/menu_item.dart';
 import 'package:sizer/sizer.dart';
 
 class TopMenu extends StatefulWidget {
-  const TopMenu({Key? key}) : super(key: key);
+  final double scrollPosition;
+  const TopMenu({Key? key, required this.scrollPosition}) : super(key: key);
 
   @override
   State<TopMenu> createState() => _TopMenuState();
@@ -29,7 +30,7 @@ class _TopMenuState extends State<TopMenu> {
     Icons.shopping_cart_outlined,
   ];
   final List<Color> menuColorList = [
-    const Color(0xFF333333).withOpacity(0.1), Colors.black
+    const Color(0xFF333333).withOpacity(0.05), Colors.black
   ];
   var isBlackMenu = false;
   var showSubMenu = false;
@@ -60,7 +61,7 @@ class _TopMenuState extends State<TopMenu> {
             });
           },
           child: Container(
-            color: menuColorList[isBlackMenu || blockMenu ? 1 : 0],
+            color: menuColorList[isBlackMenu || blockMenu || widget.scrollPosition > 0 ? 1 : 0],
             child: Padding(
               padding: EdgeInsets.only(top: 8.h, left: 3.w, right: 3.w),
               child: Row(
